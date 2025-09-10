@@ -35,12 +35,14 @@ fn guess_content_type(path: &Path) -> &'static str {
 }
 
 fn load_file(path: &Path) -> Option<String> {
+    println!("Loading file: {:?}", path);
     let mut content = String::new();
     File::open(path).ok()?.read_to_string(&mut content).ok()?;
     Some(content)
 }
 
 fn load_binary(path: &Path) -> Option<Vec<u8>> {
+    println!("Loading binary file: {:?}", path);
     let mut buf = Vec::new();
     File::open(path).ok()?.read_to_end(&mut buf).ok()?;
     Some(buf)
@@ -49,6 +51,7 @@ fn load_binary(path: &Path) -> Option<Vec<u8>> {
 fn sanitize_path(path: &str) -> Option<PathBuf> {
     let trimmed = path.trim();
     if trimmed.is_empty() || Path::new(trimmed).is_absolute() {
+        eprintln!("Invalid or absolute path attempt: {}", path);
         return None;
     }
 
@@ -57,6 +60,7 @@ fn sanitize_path(path: &str) -> Option<PathBuf> {
         .components()
         .any(|c| c == std::path::Component::ParentDir)
     {
+        eprintln!("Unsafe path traversal attempt: {}", path);
         return None;
     }
 
@@ -65,11 +69,13 @@ fn sanitize_path(path: &str) -> Option<PathBuf> {
 
 /// Preload all components into a cache at startup
 fn preload_components(names: &[&'static str]) -> ComponentCache {
+    println!("Preloading components into cache...");
     let mut map = HashMap::new();
     for &name in names {
         let path = PathBuf::from(format!("Frontend/components/{}.html", name));
         let content = load_file(&path).unwrap_or_default();
         map.insert(name, content);
+        println!("- Preloaded component: {}", name);
     }
     Arc::new(RwLock::new(map))
 }
@@ -80,11 +86,11 @@ async fn apply_template(template: &str, cache: &ComponentCache) -> String {
 
     for comp in ["head", "navbar", "footer"] {
         let html = if DEV_MODE {
-            // In dev mode, reload the component on each request.
+            println!("DEV_MODE active: Reloading component '{}' from disk.", comp);
             let path = PathBuf::from(format!("Frontend/components/{}.html", comp));
             load_file(&path)
         } else {
-            // In production mode, read from the cache.
+            println!("Production mode: Using cached component '{}'.", comp);
             let cache_read = cache.read().await;
             cache_read.get(comp).cloned()
         };
@@ -98,6 +104,7 @@ async fn apply_template(template: &str, cache: &ComponentCache) -> String {
 }
 
 async fn render_md(path: &Path, cache: &ComponentCache) -> Option<String> {
+    println!("Rendering markdown file: {:?}", path);
     let md_content = load_file(path)?;
     let parser = Parser::new_ext(&md_content, Options::all());
     let mut html_content = String::new();
@@ -113,20 +120,25 @@ async fn serve_path(
     path: &str,
     cache: &ComponentCache,
 ) -> Result<GurtResponse> {
+    println!("Serving path: '{}' from base directory '{}'", path, base_dir);
     let base = Path::new(base_dir);
     let relative_path = if path == "/" || path.is_empty() {
         PathBuf::from("")
     } else if let Some(p) = sanitize_path(path) {
         p
     } else {
+        eprintln!("Blocked invalid/unsafe path: '{}'", path);
         return Ok(GurtResponse::forbidden().with_string_body("Invalid or unsafe path"));
     };
     let full_path = base.join(&relative_path);
+    println!("Resolved full path: {:?}", full_path);
 
     if full_path.is_dir() {
+        println!("Path is a directory, looking for index file...");
         for index_file in &["index.html", "main.md"] {
             let candidate = full_path.join(index_file);
             if candidate.exists() {
+                println!("Found index file: {:?}", candidate);
                 let content = if candidate.extension().and_then(|e| e.to_str()) == Some("md") {
                     render_md(&candidate, cache).await
                 } else if let Some(c) = load_file(&candidate) {
@@ -135,16 +147,19 @@ async fn serve_path(
                     None
                 };
                 if let Some(content) = content {
+                    println!("Successfully served HTML content.");
                     return Ok(GurtResponse::ok()
                         .with_header("Content-Type", "text/html; charset=utf-8")
                         .with_string_body(content));
                 }
             }
         }
+        println!("No index file found in directory: {:?}", full_path);
         return Ok(GurtResponse::not_found().with_string_body("File not found"));
     }
 
     let content_type = guess_content_type(&full_path);
+    println!("Serving file: {:?}, Content-Type: {}", full_path, content_type);
 
     if content_type.starts_with("text/")
         || content_type.contains("javascript")
@@ -154,16 +169,19 @@ async fn serve_path(
             if content_type == "text/html; charset=utf-8" {
                 content = apply_template(&content, cache).await;
             }
+            println!("Successfully served text/HTML content.");
             return Ok(GurtResponse::ok()
                 .with_header("Content-Type", content_type)
                 .with_string_body(content));
         }
     } else if let Some(bytes) = load_binary(&full_path) {
+        println!("Successfully served binary content.");
         return Ok(GurtResponse::ok()
             .with_header("Content-Type", content_type)
             .with_body(bytes));
     }
 
+    eprintln!("File not found or failed to load: {:?}", full_path);
     Ok(GurtResponse::not_found().with_string_body("File not found"))
 }
 
@@ -178,7 +196,10 @@ async fn main() -> Result<()> {
             move |ctx| {
                 let path = ctx.path().strip_prefix("/wiki/").unwrap_or("").to_string();
                 let cache = cache.clone();
-                async move { serve_path("Data", &path, &cache).await }
+                async move {
+                    println!("Handling request for '/wiki/{}'", path);
+                    serve_path("Data", &path, &cache).await
+                }
             }
         })
         .get("/static/*", {
@@ -191,10 +212,14 @@ async fn main() -> Result<()> {
                     .trim_start_matches('/')
                     .to_string();
                 let cache = cache.clone();
-                async move { serve_path("Frontend/static", &path, &cache).await }
+                async move {
+                    println!("Handling request for '/static/{}'", path);
+                    serve_path("Frontend/static", &path, &cache).await
+                }
             }
         })
         .get("/api/count", |_ctx| async {
+            println!("Handling API request for '/api/count'");
             let mut folders = Vec::new();
             let mut entries = match read_dir("Data").await {
                 Ok(entries) => entries,
@@ -218,9 +243,8 @@ async fn main() -> Result<()> {
                 "folders": folders,
                 "count": folders.len(),
             });
+            println!("API response: Found {} folders.", folders.len());
 
-            // The key change is here:
-            // with_json_body returns a Result, so we need to use '?' to handle the inner Result
             Ok(GurtResponse::ok().with_json_body(&response_json)?)
         })
         .get("/*", {
@@ -228,7 +252,10 @@ async fn main() -> Result<()> {
             move |ctx| {
                 let path = ctx.path().strip_prefix("/").unwrap_or("").to_string();
                 let cache = cache.clone();
-                async move { serve_path("Frontend/pages", &path, &cache).await }
+                async move {
+                    println!("Handling generic request for '/{}'", path);
+                    serve_path("Frontend/pages", &path, &cache).await
+                }
             }
         });
 
