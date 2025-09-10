@@ -11,7 +11,7 @@ use tokio::sync::RwLock;
 
 const DEV_MODE: bool = true;
 const PORT: &str = "4878";
-const DOMAIN: &str = "0.0.0.0";
+const DOMAIN: &str = "192.168.0.12";
 
 type ComponentCache = Arc<RwLock<HashMap<&'static str, String>>>;
 
