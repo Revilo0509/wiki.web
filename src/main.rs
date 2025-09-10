@@ -260,5 +260,5 @@ async fn main() -> Result<()> {
         });
 
     println!("GURT server starting on gurt://{}", address);
-    server.listen(&address).await?
+    server.listen(&address).await
 }
