@@ -1,10 +1,12 @@
 use gurtlib::prelude::*;
 use pulldown_cmark::{html, Options, Parser};
+use serde_json::json;
 use std::collections::HashMap;
 use std::fs::File;
 use std::io::Read;
 use std::path::{Path, PathBuf};
 use std::sync::Arc;
+use tokio::fs::{self, read_dir};
 use tokio::sync::RwLock;
 
 const DEV_MODE: bool = true;
@@ -191,6 +193,35 @@ async fn main() -> Result<()> {
                 let cache = cache.clone();
                 async move { serve_path("Frontend/static", &path, &cache).await }
             }
+        })
+        .get("/api/count", |_ctx| async {
+            let mut folders = Vec::new();
+            let mut entries = match read_dir("Data").await {
+                Ok(entries) => entries,
+                Err(e) => {
+                    eprintln!("Error reading 'Data' directory: {}", e);
+                    return Ok(GurtResponse::internal_server_error()
+                        .with_string_body("Failed to read data directory"));
+                }
+            };
+
+            while let Some(entry) = entries.next_entry().await.unwrap() {
+                let path = entry.path();
+                if path.is_dir() {
+                    if let Some(folder_name) = path.file_name().and_then(|n| n.to_str()) {
+                        folders.push(folder_name.to_string());
+                    }
+                }
+            }
+
+            let response_json = json!({
+                "folders": folders,
+                "count": folders.len(),
+            });
+
+            // The key change is here:
+            // with_json_body returns a Result, so we need to use '?' to handle the inner Result
+            Ok(GurtResponse::ok().with_json_body(&response_json)?)
         })
         .get("/*", {
             let cache = cache.clone();
