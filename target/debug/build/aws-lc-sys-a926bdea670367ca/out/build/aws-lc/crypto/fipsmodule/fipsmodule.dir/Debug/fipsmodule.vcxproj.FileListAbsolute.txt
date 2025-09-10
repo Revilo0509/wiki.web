@@ -1,0 +1,1 @@
+C:\Users\olive\Desktop\gurtweb\target\debug\build\aws-lc-sys-a926bdea670367ca\out\build\aws-lc\crypto\fipsmodule\fipsmodule.dir\Debug\fipsmodule.lib

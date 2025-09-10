@@ -1,0 +1,13 @@
+C:/Users/olive/Desktop/gurtweb/target/release/build/aws-lc-sys-bbc0cb0c30033b64/out/build/CMakeFiles/rust_wrapper.dir
+C:/Users/olive/Desktop/gurtweb/target/release/build/aws-lc-sys-bbc0cb0c30033b64/out/build/CMakeFiles/INSTALL.dir
+C:/Users/olive/Desktop/gurtweb/target/release/build/aws-lc-sys-bbc0cb0c30033b64/out/build/CMakeFiles/ALL_BUILD.dir
+C:/Users/olive/Desktop/gurtweb/target/release/build/aws-lc-sys-bbc0cb0c30033b64/out/build/CMakeFiles/ZERO_CHECK.dir
+C:/Users/olive/Desktop/gurtweb/target/release/build/aws-lc-sys-bbc0cb0c30033b64/out/build/aws-lc/CMakeFiles/boringssl_prefix_symbols.dir
+C:/Users/olive/Desktop/gurtweb/target/release/build/aws-lc-sys-bbc0cb0c30033b64/out/build/aws-lc/CMakeFiles/INSTALL.dir
+C:/Users/olive/Desktop/gurtweb/target/release/build/aws-lc-sys-bbc0cb0c30033b64/out/build/aws-lc/CMakeFiles/ALL_BUILD.dir
+C:/Users/olive/Desktop/gurtweb/target/release/build/aws-lc-sys-bbc0cb0c30033b64/out/build/aws-lc/crypto/CMakeFiles/crypto_objects.dir
+C:/Users/olive/Desktop/gurtweb/target/release/build/aws-lc-sys-bbc0cb0c30033b64/out/build/aws-lc/crypto/CMakeFiles/crypto.dir
+C:/Users/olive/Desktop/gurtweb/target/release/build/aws-lc-sys-bbc0cb0c30033b64/out/build/aws-lc/crypto/CMakeFiles/INSTALL.dir
+C:/Users/olive/Desktop/gurtweb/target/release/build/aws-lc-sys-bbc0cb0c30033b64/out/build/aws-lc/crypto/fipsmodule/CMakeFiles/fipsmodule.dir
+C:/Users/olive/Desktop/gurtweb/target/release/build/aws-lc-sys-bbc0cb0c30033b64/out/build/aws-lc/crypto/fipsmodule/CMakeFiles/INSTALL.dir
+C:/Users/olive/Desktop/gurtweb/target/release/build/aws-lc-sys-bbc0cb0c30033b64/out/build/aws-lc/util/fipstools/CMakeFiles/INSTALL.dir

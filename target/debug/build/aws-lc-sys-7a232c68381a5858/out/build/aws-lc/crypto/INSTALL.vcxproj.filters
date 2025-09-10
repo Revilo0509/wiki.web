@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\olive\Desktop\gurtweb\target\debug\build\aws-lc-sys-7a232c68381a5858\out\build\CMakeFiles\c47a4bbc4526f5cf04b2cfa1ac3da59d\INSTALL_force.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{0D50ED8A-2946-3C3F-892C-28AE43D7FA00}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

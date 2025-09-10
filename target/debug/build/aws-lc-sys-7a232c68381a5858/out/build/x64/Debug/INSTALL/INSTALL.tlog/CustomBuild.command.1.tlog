@@ -1,0 +1,10 @@
+^C:\USERS\OLIVE\DESKTOP\GURTWEB\TARGET\DEBUG\BUILD\AWS-LC-SYS-7A232C68381A5858\OUT\BUILD\CMAKEFILES\B62A397B569464083FF58D174B9B66FA\INSTALL_FORCE.RULE
+setlocal
+cd .
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

@@ -1,0 +1,11 @@
+{
+	"InstallScripts" : 
+	[
+		"C:/Users/olive/Desktop/gurtweb/target/release/build/aws-lc-sys-bbc0cb0c30033b64/out/build/cmake_install.cmake",
+		"C:/Users/olive/Desktop/gurtweb/target/release/build/aws-lc-sys-bbc0cb0c30033b64/out/build/aws-lc/cmake_install.cmake",
+		"C:/Users/olive/Desktop/gurtweb/target/release/build/aws-lc-sys-bbc0cb0c30033b64/out/build/aws-lc/crypto/cmake_install.cmake",
+		"C:/Users/olive/Desktop/gurtweb/target/release/build/aws-lc-sys-bbc0cb0c30033b64/out/build/aws-lc/crypto/fipsmodule/cmake_install.cmake",
+		"C:/Users/olive/Desktop/gurtweb/target/release/build/aws-lc-sys-bbc0cb0c30033b64/out/build/aws-lc/util/fipstools/cmake_install.cmake"
+	],
+	"Parallel" : false
+}

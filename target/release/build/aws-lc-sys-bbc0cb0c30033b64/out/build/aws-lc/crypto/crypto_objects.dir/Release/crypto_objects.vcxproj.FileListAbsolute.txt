@@ -1,0 +1,1 @@
+C:\Users\olive\Desktop\gurtweb\target\release\build\aws-lc-sys-bbc0cb0c30033b64\out\build\aws-lc\crypto\crypto_objects.dir\Release\crypto_objects.lib
