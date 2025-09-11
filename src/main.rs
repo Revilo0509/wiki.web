@@ -190,7 +190,7 @@ async fn main() -> Result<()> {
     let cache = preload_components(&["head", "navbar", "footer"]);
     let address = format!("{}:{}", DOMAIN, PORT);
 
-    let server = GurtServer::with_tls_certificates("cert.pem", "key.pem")?
+    let server = GurtServer::with_tls_certificates("certs/wiki.web.crt", "certs/wiki.web.key")?
         .get("/wiki/*", {
             let cache = cache.clone();
             move |ctx| {
